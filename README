@@ -1,0 +1,17 @@
+file tree:
+code
+-   .ipynb_checkpoints      -   a folder with past checkpoints of the code folder, can be ignored when grading.
+-   half-way_submission     -   includes EDA, first round of data preprocessing, general python code used for half-way submission, is in no way the final product.
+-   sql schema              -   sql queries created by python code in half-way submission
+-   sql queries             -   
+-   final-submission        -   includes code for final submission, final round of preprocessing, etc.
+data
+-   mental health dataset
+-   social media dataset
+-   documentation for mental health dataset
+
+Research questions:
+Is there an association between social media usage and deteriorating mental health for different age and gender groups?
+-   What is the relationship between an individual’s age group and their social media usage?
+-   What is the relationship between an individual’s sex and their social media usage?
+-   Is one of depression and anxiety more prominent with the use of social media?
