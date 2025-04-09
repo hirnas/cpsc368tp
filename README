@@ -1,10 +1,11 @@
 file tree:
 code
--   .ipynb_checkpoints      -   a folder with past checkpoints of the code folder, can be ignored when grading.
+-   .ipynb_checkpoints      -   a folder with past checkpoints of the code folder, can be ignored when grading
 -   half-way_submission     -   includes EDA, first round of data preprocessing, general python code used for half-way submission, is in no way the final product.
--   sql schema              -   sql queries created by python code in half-way submission
--   sql queries             -   
+-   sql_mh_schema_update    -   
+-   sql_mh_schema           -   
 -   final-submission        -   includes code for final submission, final round of preprocessing, etc.
+-   sql-querying            -   
 data
 -   mental health dataset
 -   social media dataset
