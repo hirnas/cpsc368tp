@@ -1,9 +1,9 @@
 File Tree:
 code
--   .ipynb_checkpoints      -   past checkpoints of the code folder (file irrelevant for final project)
--   half-way_submission     -   includes EDA, initial data preprocessing, initial sql mapping (file irrelevant for final project)
+-   .ipynb_checkpoints      -   past checkpoints of the code folder (not used)
+-   half-way_submission     -   includes EDA, initial data preprocessing, initial sql mapping (not used)
 -   sql_mh_schema_updated    -   the updated sql schema, with changes specific to the final project
--   sql_mh_schema           -   the initial sql schema for the halfway submission (file irrelevant for final project)
+-   sql_mh_schema           -   the initial sql schema for the halfway submission (not used)
 -   final-submission        -   includes code for final submission, final round of preprocessing, etc.
 -   sql-querying            -   the code used to connect to oracledb, execute sql, and arrive at the results
 data
