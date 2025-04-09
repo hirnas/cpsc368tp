@@ -1,18 +1,81 @@
-file tree:
+File Tree:
 code
--   .ipynb_checkpoints      -   a folder with past checkpoints of the code folder, can be ignored when grading
--   half-way_submission     -   includes EDA, first round of data preprocessing, general python code used for half-way submission, is in no way the final product.
--   sql_mh_schema_update    -   
--   sql_mh_schema           -   
+-   .ipynb_checkpoints      -   a folder with past checkpoints of the code folder, can be ignored when grading (no need to refer to this for final project)
+-   half-way_submission     -   includes EDA, first round of data preprocessing, general python code used for half-way submission (no need to refer to this for final project)
+-   sql_mh_schema_updated    -   the updated sql schema, with changes specific to the final project
+-   sql_mh_schema           -   the initial sql schema for the halfway submission (no need to refer to this for final project)
 -   final-submission        -   includes code for final submission, final round of preprocessing, etc.
--   sql-querying            -   
+-   sql-querying            -   the code used to connect to the OracleDB, execute SQL queries, and arrive at the final results
 data
--   mental health dataset
--   social media dataset
--   documentation for mental health dataset
+-   mental_health2425v8in.csv - mental health dataset
+-   mmc2.xlsx - social media dataset
+-   student-guidebook-for-mental-health-dataset.docx - documentation for mental health dataset
 
-Research questions:
+Order of Execution:
+1. final-submission.ipynb - execute this file first to pull the data, perform initial preprocessing, and generate the updated schema (outputs sql_mh_schema_updated.sql)
+2. ensure connections are established 
+    - enter the CS department's secure shell: ssh -l inigogrc -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
+    - copy the schema to the database: scp /Users/benjogerochi/cpsc368tp/code/sm_mh_schema_updated.sql inigogrc@remote.students.cs.ubc.ca:/home/i/inigogrc/cpsc368
+3. set up sqlplus by logging in (with command "sqlplus ora_inigogrc@stu)
+    - once the schema file is on the server, ensure all current schemas and tables are cleared (with delete from or truncate table commands) 
+    - run: "start sm_mh_schema_updated.sql;" on sqlplus to create the tables, insert the data values, and establish the sql dependencies
+    - confirm the schema loaded properly by running "select * from social_media_table" (or mental_health_table)
+    - run: "commit;" to commit the changes to the database
+4. sql-querying.ipynb - execute this file to connect to the UBC CS department's server from Jupyter (with OracleDB), retrieve the data, and produce the results of the analysis
+
+Research Questions:
 Is there an association between social media usage and deteriorating mental health for different age and gender groups?
 -   What is the relationship between an individual’s age group and their social media usage?
 -   What is the relationship between an individual’s sex and their social media usage?
 -   Is one of depression and anxiety more prominent with the use of social media?
+
+SQL Aggregation Query used (within a database cursor execution):
+WITH mh_agg AS (
+  SELECT 
+    age,
+    sex,
+    COUNT(unique_id) AS mh_count,
+    AVG(phq_score) AS avg_phq_score,
+    AVG(gad7_score) AS avg_gad7_score,
+    AVG(hopeless) AS avg_hopeless,
+    AVG(overwhelmed) AS avg_overwhelmed,
+    AVG(exhausted) AS avg_exhausted,
+    AVG(sad) AS avg_sad,
+    AVG(rly_sad) AS avg_rly_sad,
+    AVG(considered) AS avg_considered,
+    AVG(attempted) AS avg_attempted,
+    AVG(depression_diagnosis) AS pct_diagnosed
+  FROM mental_health_table
+  GROUP BY age, sex
+),
+sm_agg AS (
+  SELECT 
+    age,
+    sex,
+    COUNT(unique_id) AS sm_count,
+    AVG(sns_use_length) AS avg_sns_use_length,
+    AVG(sns_use_daily) AS avg_sns_use_daily,
+    AVG(sns_use_case) AS avg_sns_use_case,
+    AVG(sns_friends) AS avg_sns_friends,
+    AVG(sns_personal) AS avg_sns_personal,
+    AVG(CASE WHEN sns_good = 1 THEN 1 ELSE 0 END) AS pct_sns_good,
+    AVG(CASE WHEN sns_believe = 1 THEN 1 ELSE 0 END) AS pct_sns_believe,
+    AVG(peer_pressure) AS pct_peer_pressure,
+    AVG(sns_influence) AS pct_sns_influence,
+    AVG(sns_wellbeing) AS pct_sns_wellbeing
+  FROM social_media_table
+  GROUP BY age, sex
+)
+SELECT 
+  COALESCE(mh.age, sm.age) AS age,
+  COALESCE(mh.sex, sm.sex) AS sex,
+  mh.mh_count, sm.sm_count, mh.avg_phq_score, mh.avg_gad7_score, mh.avg_hopeless, 
+  mh.avg_overwhelmed, mh.avg_exhausted, mh.avg_sad, mh.avg_rly_sad, mh.avg_considered, 
+  mh.avg_attempted, mh.pct_diagnosed, sm.avg_sns_use_length, sm.avg_sns_use_daily,
+  sm.avg_sns_use_case, sm.avg_sns_friends, sm.avg_sns_personal, sm.pct_sns_good,
+  sm.pct_sns_believe, sm.pct_peer_pressure, sm.pct_sns_influence, sm.pct_sns_wellbeing
+FROM mh_agg mh
+FULL OUTER JOIN sm_agg sm
+  ON mh.age = sm.age
+ AND mh.sex = sm.sex
+ORDER BY age, sex
