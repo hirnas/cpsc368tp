@@ -20,7 +20,7 @@ Order of Execution:
 ssh -l inigogrc -L localhost:1522:dbhost.students.cs.ubc.ca:1522 remote.students.cs.ubc.ca
     - copy the schema to the database with
 scp /Users/benjogerochi/cpsc368tp/code/sm_mh_schema_updated.sql inigogrc@remote.students.cs.ubc.ca:/home/i/inigogrc/cpsc368
-3. set up sqlplus by logging in (with command "sqlplus ora_inigogrc@stu)
+3. set up sqlplus by logging in (with command "sqlplus ora_inigogrc@stu")
     - once the schema file is on the server, ensure all current schemas and tables are cleared (with delete from or truncate table commands) 
     - run: "start sm_mh_schema_updated.sql;" on sqlplus to create the tables, insert the data values, and establish the sql dependencies
     - confirm the schema loaded properly by running "select * from social_media_table" (or mental_health_table)
